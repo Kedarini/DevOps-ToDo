@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI ToDo App</title>
+</head>
+
+<body>
+    <h1>My ToDo List</h1>
+
+    <input type="text" id="taskInput" placeholder="New task...">
+    <button onclick="addTodo()">Add</button>
+
+    <ul id="todoList"></ul>
+
+    <script>
+        async function loadTodos() {
+            const response = await fetch('/api/todos');
+            const todos = await response.json();
+            const listElement = document.getElementById('todoList');
+            listElement.innerHTML = '';
+
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    ${todo} 
+                    <button onclick="removeTodo('${todo}')">Remove</button>
+                `;
+                listElement.appendChild(li);
+            });
+        }
+
+        async function addTodo() {
+            const input = document.getElementById('taskInput');
+            await fetch('/api/todos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: input.value })
+            });
+            input.value = '';
+            loadTodos();
+        }
+
+        async function removeTodo(taskText) {
+            await fetch('/api/todos/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: taskText })
+            });
+            loadTodos();
+        }
+
+        loadTodos();
+    </script>
+</body>
+
+</html>
