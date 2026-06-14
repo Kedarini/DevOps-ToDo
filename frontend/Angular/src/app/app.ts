@@ -1,40 +1,28 @@
-import { Component, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Api } from './services/api'
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [ FormsModule ],
+  imports: [ FormsModule, CommonModule ],
   styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('Angular');
-  todos: any[] = [];
-  newTask: string = '';
+export class App implements OnInit {
+  backendData: any;
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: Api) {}
 
   ngOnInit() {
-    this.loadTodos();
-  }
-
-  loadTodos() {
-    this.http.get<any[]>('/api/todos').subscribe(data => {
-      this.todos = data;
-    });
-  }
-
-  addTodo() {
-    this.http.post('/api/todos', { task: this.newTask }).subscribe(() => {
-      this.newTask = '';
-      this.loadTodos();
-    });
-  }
-
-  removeTodo(taskText: string) {
-    this.http.post('/api/todos/remove', { task: taskText }).subscribe(() => {
-      this.loadTodos();
-    });
+    this.api.getData().subscribe({
+      next: (data) => {
+        this.backendData = data;
+        console.log('Dane pobrane pomyślnie:', data)
+      },
+      error: (err) => {
+        console.error('Błąd połączenia z FastAPI:', err);
+      }
+    })
   }
 }
