@@ -1,0 +1,25 @@
+# Ignore local virtual environments
+.venv/
+venv/
+env/
+
+# Ignore Python bytecode cache files
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local tool configurations and git history
+.git/
+.gitignore
+.dockerignore
+.vscode/
+.idea/
+
+# Ignore local secrets and credentials
+.env
+*.local
+
+# Ignore logs and documentation
+README.md
+*.log
