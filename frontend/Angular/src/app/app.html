@@ -1,8 +1,12 @@
-<input placeholder="Enter a task">
-<button class="btn">Add Task</button>
+<input placeholder="Enter a task" [(ngModel)]="task">
+<button class="btn" (click)="newTask()">Add Task</button>
 
 <ul id="todoList">
-    <li> 
-      <button>Remove</button>
+  @for (item of backendData; track item; let i = $index)
+  {
+    <li>
+      {{ item }} 
+      <button (click)="removeTask(i)">Remove</button>
     </li>
+  }
 </ul>

@@ -11,18 +11,39 @@ import { Api } from './services/api'
 })
 export class App implements OnInit {
   backendData: any;
+  task !: string;
 
   constructor(private api: Api) {}
 
   ngOnInit() {
+    this.refreshList();
+  }
+
+  refreshList() {
     this.api.getData().subscribe({
-      next: (data) => {
-        this.backendData = data;
-        console.log('Dane pobrane pomyślnie:', data)
+      next: (data) => this.backendData = data,
+      error: (err) => console.error('Błąd połączenia:', err)
+    });
+  }
+
+  newTask() {
+    if (!this.task) return;
+
+    this.api.sendTaskData(this.task).subscribe({
+      next: (updatedList) => {
+        this.backendData = updatedList;
+        this.task = '';
       },
-      error: (err) => {
-        console.error('Błąd połączenia z FastAPI:', err);
-      }
+      error: (err) => console.error('Błąd zapisu:', err)
+    })
+  }
+
+  removeTask(index: number) {
+    this.api.deleteTask(index).subscribe({
+      next: (updatedList) => {
+        this.backendData = updatedList;
+      },
+      error: (err) => console.error('Błąd usuwania:', err)
     })
   }
 }
